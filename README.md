@@ -1,111 +1,128 @@
-# Grok API 中转站指南（Grok 4 / Grok 4 Heavy / Grok 4.1）
+# Grok API 中转站
 
-> 中文用户快速体验 Grok 4 系列模型的实用指南  
-> 支持 Grok 4、Grok 4 Heavy、Grok 4.1 ｜ 国内可用 ｜ 中文友好
+> 支持 SSO Token 和 API Key 的 Grok 模型中转代理，兼容 OpenAI API 格式，一键部署到 Vercel
 
----
-
-## 📌 项目简介
-
-本项目旨在为中文用户提供一份 **Grok API 中转站使用指南**，  
-帮助用户在国内网络环境下，**低门槛体验 Grok 最新模型能力**。
-
-适合人群：
-- 普通用户 / AI 爱好者  
-- 内容创作者 / 自媒体  
-- 开发者 / API 测试  
-- 需要 Grok 中文体验的用户  
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fxianyu110%2Fgrokapi)
 
 ---
 
-## 🔗 推荐入口
+## ✨ 特性
 
-- **Grok API 中转站**  
-  👉 https://apipro.maynor1024.live/
+- **OpenAI API 兼容** — 支持所有兼容 OpenAI 格式的客户端（ChatGPT Next Web、LobeChat、OpenCat 等）
+- **双重认证** — 支持 SSO Token（grokzhuce 注册工具生成）和 xAI 官方 API Key
+- **Vercel 部署** — Serverless 架构，零成本部署
+- **内置聊天界面** — MkDocs Material 文档站 + Web 聊天 UI
+- **中文友好** — 完整的中文文档与界面
 
-- **Grok 镜像站聚合页**  
-  👉 https://maynorai.top/list/#/home/
+## 📦 项目结构
 
-> 本项目仅做信息整理与使用说明，不提供模型本体服务。
+```
+grokapi/
+├── api/                    # Vercel Serverless Functions
+│   ├── health.py          # 健康检查端点
+│   └── v1/
+│       ├── chat/
+│       │   └── completions.py  # 聊天补全 API（核心）
+│       └── models.py      # 模型列表 API
+├── docs/                   # MkDocs 文档源码
+│   ├── index.md           # 首页
+│   ├── chat.md            # 在线聊天界面
+│   ├── api.md             # API 文档
+│   ├── zh.md              # 部署指南
+│   └── models.md          # 模型参考
+├── mkdocs.yml             # MkDocs 配置
+├── vercel.json            # Vercel 部署配置
+├── requirements.txt       # Python 依赖
+└── .env.example           # 环境变量模板
+```
 
----
+## 🚀 快速部署
 
-## 🤖 什么是 Grok API 中转站？
+### 1. 一键部署
 
-**Grok API 中转站**通常指由第三方平台提供的 Grok 模型访问服务，  
-通过国内节点或镜像方式，为用户提供：
+点击上方 **Deploy with Vercel** 按钮，或手动 Fork 后导入 Vercel。
 
-- 国内可访问的 Grok 使用方式  
-- 更友好的中文对话体验  
-- 更低的使用与测试门槛  
+### 2. 配置环境变量
 
----
+在 Vercel Dashboard → Settings → Environment Variables 中添加：
 
-## 🧠 Grok 最新模型说明（2025）
-
-当前主流 Grok 中转站已支持 **Grok 4 系列模型**：
-
-| 模型 | 定位 | 适合场景 |
+| 变量名 | 说明 | 必填 |
 |---|---|---|
-| **Grok 4** | 通用模型 | 对话、问答、翻译 |
-| **Grok 4 Heavy** | 高性能模型 | 编程、分析、复杂推理 |
-| **Grok 4.1** | 优化迭代版 | 写作、创作、内容生成 |
+| `GROK_SSO_TOKEN` | Grok SSO Token（JWT 格式，从 grokzhuce 获取） | 二选一 |
+| `GROK_API_KEY` | xAI 官方 API Key（从 console.x.ai 获取） | 二选一 |
+| `AUTH_TOKEN` | 保护中转站的访问令牌（客户端需要提供此令牌） | 可选 |
 
-> 模型名称以中转站常见命名为准，用于区分性能与使用场景。
+> 如果同时设置了 `GROK_API_KEY` 和 `GROK_SSO_TOKEN`，优先使用 API Key。
 
----
+### 3. 重新部署
 
-## 🆚 Grok 官网 vs Grok API 中转站
+添加环境变量后，在 Deployments 页面选择 Redeploy。
 
-| 对比项 | Grok 官网 | Grok API 中转站 |
+## 📡 API 使用
+
+### 端点
+
+| 端点 | 方法 | 说明 |
 |---|---|---|
-| 国内访问 | 可能受限 | 更顺畅 |
-| 注册门槛 | 较高 | 低 |
-| 中文优化 | 通用 | 更友好 |
-| 使用成本 | 较高 | 灵活 |
+| `/v1/chat/completions` | POST | 聊天补全 |
+| `/v1/models` | GET | 模型列表 |
+| `/api/health` | GET | 健康检查 |
 
----
+### cURL 示例
 
-## 🚀 Grok API 中转站使用方法
+```bash
+curl -X POST "https://你的域名/v1/chat/completions" \
+  -H "Authorization: Bearer YOUR_AUTH_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "grok-3",
+    "messages": [{"role": "user", "content": "你好！"}]
+  }'
+```
 
-1. 打开中转站地址  
-2. 扫码或免注册进入  
-3. 选择 Grok 4 / 4 Heavy / 4.1  
-4. 开始对话或 API 测试  
+### Python（OpenAI SDK）
 
----
+```python
+from openai import OpenAI
 
-## ❓ 常见问题（FAQ）
+client = OpenAI(
+    api_key="YOUR_AUTH_TOKEN",
+    base_url="https://你的域名/v1"
+)
 
-**Q：Grok API 中转站是官方服务吗？**  
-A：不是，通常为第三方平台提供的模型访问服务。
+response = client.chat.completions.create(
+    model="grok-3",
+    messages=[{"role": "user", "content": "你好！"}]
+)
+print(response.choices[0].message.content)
+```
 
-**Q：Grok 4 国内可以使用吗？**  
-A：可以，通过 Grok API 中转站或镜像站使用。
+## 🧠 支持的模型
 
-**Q：是否免费？**  
-A：部分平台提供免费体验额度，高频或高级功能可能需要付费。
+| 模型 | API 标识 | 说明 |
+|---|---|---|
+| Grok 3 | `grok-3` | 主力通用模型（推荐） |
+| Grok 3 Mini | `grok-3-mini` | 轻量快速模型 |
+| Grok 4 | `grok-4` | 新一代通用模型 |
+| Grok 4 Heavy | `grok-4-heavy` | 高性能推理模型 |
+| Grok 4.1 | `grok-4-1` | 内容优化模型 |
 
----
+## 🔑 获取 SSO Token
 
-## ⚠️ 使用说明与免责声明
+使用 [grokzhuce](https://github.com/xianyu110/grokzhuce) 批量注册工具：
 
-- 本项目不隶属于 xAI 或 Grok 官方  
-- 内容仅用于信息整理与技术交流  
-- 请勿输入个人隐私或敏感信息  
-- 实际模型能力以平台实现为准  
+```bash
+python grok.py
+```
 
----
+注册成功后，Token 保存在 `keys/` 目录下。
 
-## 🌟 Star 支持
+## ⚠️ 免责声明
 
-如果本项目对你有帮助，欢迎 **Star ⭐ / Fork 🍴 / 分享**  
-后续将持续更新：
-- Grok 模型版本变化  
-- 可用镜像站信息  
-- 使用技巧与对比说明  
-
----
+- 本项目不隶属于 xAI 或 Grok 官方
+- 仅用于技术学习与交流
+- 请勿用于违法或违规用途
+- SSO Token 有有效期，过期需重新获取
 
 ## 📄 License
 

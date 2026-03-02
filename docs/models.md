@@ -1,40 +1,85 @@
-# Models Reference
+# 🧠 模型参考
 
-## Available Models
+## 可用模型一览
+
+| 模型 | API 标识 | 类型 | 速度 | 质量 | 推荐场景 |
+|---|---|---|---|---|---|
+| **Grok 3** | `grok-3` | 主力 | ⚡ 快 | ⭐⭐⭐⭐ | 通用对话、推理、编程 |
+| **Grok 3 Mini** | `grok-3-mini` | 轻量 | ⚡⚡ 极快 | ⭐⭐⭐ | 简单问答、快速回复 |
+| **Grok 4** | `grok-4` | 通用 | ⚡ 快 | ⭐⭐⭐⭐ | 日常对话、翻译 |
+| **Grok 4 Heavy** | `grok-4-heavy` | 高性能 | 🐢 较慢 | ⭐⭐⭐⭐⭐ | 复杂推理、深度分析 |
+| **Grok 4.1** | `grok-4-1` | 优化 | ⚡ 快 | ⭐⭐⭐⭐⭐ | 写作、创意内容生成 |
+
+## 模型详情
+
+### Grok 3
+
+!!! info "推荐首选"
+    Grok 3 是当前最稳定、最均衡的模型，适合大多数使用场景。
+
+- **类型**: 主力通用模型
+- **特长**: 对话、推理、编程、翻译、知识问答
+- **API 标识**: `grok-3`
+- **推荐温度**: 0.5-0.7
+
+### Grok 3 Mini
+
+- **类型**: 轻量快速模型
+- **特长**: 快速响应、简单任务、短文本生成
+- **API 标识**: `grok-3-mini`
+- **推荐温度**: 0.3-0.5
+- **适合**: 对响应速度要求高、任务简单的场景
 
 ### Grok 4
-- **Type**: General-purpose
-- **Use cases**: Daily conversations, Q&A, translation
-- **Description**: Fourth-generation general-purpose model for everyday tasks
+
+- **类型**: 新一代通用模型
+- **特长**: 对话、问答、翻译
+- **API 标识**: `grok-4`
+- **推荐温度**: 0.5-0.7
 
 ### Grok 4 Heavy
-- **Type**: High-performance
-- **Use cases**: Complex reasoning, programming, analysis
-- **Description**: Enhanced performance version for demanding tasks
+
+- **类型**: 高性能推理模型
+- **特长**: 复杂推理、代码生成、数据分析、数学
+- **API 标识**: `grok-4-heavy`
+- **推荐温度**: 0.1-0.3（精确任务）/ 0.5-0.7（通用）
+- **注意**: 响应速度较慢，适合对质量要求高的任务
 
 ### Grok 4.1
-- **Type**: Optimized
-- **Use cases**: Writing, content creation, creative tasks
-- **Description**: Optimized iteration focusing on quality output
 
-## Model Comparison
+- **类型**: 内容优化模型
+- **特长**: 高质量写作、创意内容、文案
+- **API 标识**: `grok-4-1`
+- **推荐温度**: 0.7-1.0（创意）/ 0.3-0.5（严谨）
 
-| Model | Speed | Quality | Best For |
-|-------|-------|---------|----------|
-| Grok 4 | Fast | Good | General tasks |
-| Grok 4 Heavy | Medium | Excellent | Complex reasoning |
-| Grok 4.1 | Fast | Excellent | Content creation |
+## 场景推荐
 
-## API Model Names
+| 使用场景 | 推荐模型 | 推荐温度 |
+|---|---|---|
+| 日常聊天 | `grok-3` | 0.7 |
+| 代码编写 | `grok-4-heavy` | 0.2 |
+| 文章写作 | `grok-4-1` | 0.8 |
+| 快速问答 | `grok-3-mini` | 0.5 |
+| 数据分析 | `grok-4-heavy` | 0.3 |
+| 翻译 | `grok-3` | 0.3 |
+| 创意头脑风暴 | `grok-4-1` | 1.0 |
 
-When making API requests, use these model identifiers:
+## 模型别名映射
 
-- `grok-4` → Grok 4
-- `grok-4-heavy` → Grok 4 Heavy
-- `grok-4-1` → Grok 4.1
+!!! note "关于模型映射"
+    在 SSO Token 模式下，部分模型名称会自动映射到实际可用的模型：
+    
+    - `grok-4` → `grok-3`
+    - `grok-4-heavy` → `grok-3`  
+    - `grok-4-1` → `grok-3`
+    
+    在 API Key 模式下，模型名称会直接传递给 xAI 官方 API。
 
-## Version History
+## 更新历史
 
-- **2025-01**: Added Grok 4.1 optimized version
-- **2024-12**: Introduced Grok 4 Heavy for high-performance tasks
-- **2024-11**: Initial release of Grok 4 series
+| 日期 | 更新内容 |
+|---|---|
+| **2026-03** | 添加 SSO Token 代理支持，更新模型列表 |
+| **2025-01** | 添加 Grok 4.1 优化版本 |
+| **2024-12** | 引入 Grok 4 Heavy 高性能模型 |
+| **2024-11** | 首次发布 Grok 4 系列 |

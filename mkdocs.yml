@@ -57,6 +57,7 @@ nav:
     - zh.md
     - api.md
   - 模型参考: models.md
+  - 在线体验: chat.md
 
 plugins:
   - search:
@@ -67,8 +68,6 @@ plugins:
 
 markdown_extensions:
   - admonition
-  - codehilite:
-      linenums: true
   - toc:
       permalink: true
       toc_depth: 3
@@ -110,5 +109,5 @@ extra_javascript:
   - javascripts/extra.js
 
 copyright: |
-  &copy; 2025 Grok API Guide -
+  &copy; 2026 Grok API 中转站 -
   <a href="#__consent">更改Cookie设置</a>

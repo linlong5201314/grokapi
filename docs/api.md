@@ -2,47 +2,61 @@
 
 ## 基本信息
 
-**Base URL:** `https://your-proxy-endpoint.com/v1`
+**Base URL:** `https://你的vercel域名/v1`
 
-**认证方式:** Bearer Token
+**认证方式:** Bearer Token（如果设置了 `AUTH_TOKEN` 环境变量）
 
-## 请求参数
+## 端点列表
 
-### 基本请求格式
+| 端点 | 方法 | 说明 |
+|---|---|---|
+| `/v1/chat/completions` | POST | 聊天补全（主要端点） |
+| `/v1/models` | GET | 获取可用模型列表 |
+| `/api/health` | GET | 健康检查 |
+
+## 聊天补全
+
+### 请求格式
 
 ```json
 {
-  "model": "grok-4",
+  "model": "grok-3",
   "messages": [
+    {
+      "role": "system",
+      "content": "你是一个有帮助的助手"
+    },
     {
       "role": "user",
       "content": "你好！"
     }
   ],
   "temperature": 0.7,
-  "max_tokens": 1000,
+  "max_tokens": 4096,
   "stream": false
 }
 ```
 
-## 支持的模型
+### 支持的模型
 
-| 模型名称 | API 标识 | 特点 |
-|---|---|---|
-| Grok 4 | `grok-4` | 通用模型，适合日常对话 |
-| Grok 4 Heavy | `grok-4-heavy` | 高性能，适合复杂推理 |
-| Grok 4.1 | `grok-4-1` | 优化版本，适合内容创作 |
+| 模型名称 | API 标识 | 实际映射 | 说明 |
+|---|---|---|---|
+| Grok 3 | `grok-3` | grok-3 | 主力模型 |
+| Grok 3 Mini | `grok-3-mini` | grok-3-mini | 轻量模型 |
+| Grok 4 | `grok-4` | grok-3 | 别名映射 |
+| Grok 4 Heavy | `grok-4-heavy` | grok-3 | 别名映射 |
+| Grok 4.1 | `grok-4-1` | grok-3 | 别名映射 |
 
 ## 请求示例
 
-### cURL 示例
+### cURL
 
 ```bash
-curl -X POST "https://your-proxy-endpoint.com/v1/chat/completions" \
-  -H "Authorization: Bearer YOUR_API_KEY" \
+curl -X POST "https://你的域名/v1/chat/completions" \
+  -H "Authorization: Bearer YOUR_AUTH_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "grok-4",
+    "model": "grok-3",
     "messages": [
       {
         "role": "user",
@@ -50,52 +64,66 @@ curl -X POST "https://your-proxy-endpoint.com/v1/chat/completions" \
       }
     ],
     "temperature": 0.7,
-    "max_tokens": 500
+    "max_tokens": 2000
   }'
 ```
 
-### Python 示例
+### Python
 
 ```python
 import requests
 
-url = "https://your-proxy-endpoint.com/v1/chat/completions"
+url = "https://你的域名/v1/chat/completions"
 headers = {
-    "Authorization": "Bearer YOUR_API_KEY",
+    "Authorization": "Bearer YOUR_AUTH_TOKEN",
     "Content-Type": "application/json"
 }
 data = {
-    "model": "grok-4",
+    "model": "grok-3",
     "messages": [
-        {
-            "role": "user",
-            "content": "写一个Python函数来计算斐波那契数列"
-        }
+        {"role": "user", "content": "写一个 Python 斐波那契函数"}
     ],
     "temperature": 0.3,
     "max_tokens": 800
 }
 
 response = requests.post(url, headers=headers, json=data)
-print(response.json())
+result = response.json()
+print(result["choices"][0]["message"]["content"])
 ```
 
-### JavaScript 示例
+### Python（OpenAI SDK）
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="YOUR_AUTH_TOKEN",
+    base_url="https://你的域名/v1"
+)
+
+response = client.chat.completions.create(
+    model="grok-3",
+    messages=[
+        {"role": "user", "content": "你好，请做一个自我介绍"}
+    ]
+)
+print(response.choices[0].message.content)
+```
+
+### JavaScript
 
 ```javascript
-const response = await fetch('https://your-proxy-endpoint.com/v1/chat/completions', {
+const response = await fetch('https://你的域名/v1/chat/completions', {
   method: 'POST',
   headers: {
-    'Authorization': 'Bearer YOUR_API_KEY',
+    'Authorization': 'Bearer YOUR_AUTH_TOKEN',
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
-    model: 'grok-4',
+    model: 'grok-3',
     messages: [
-      {
-        role: 'user',
-        content: '解释一下什么是机器学习'
-      }
+      { role: 'user', content: '解释一下什么是机器学习' }
     ],
     temperature: 0.5,
     max_tokens: 600
@@ -103,138 +131,89 @@ const response = await fetch('https://your-proxy-endpoint.com/v1/chat/completion
 });
 
 const result = await response.json();
-console.log(result);
+console.log(result.choices[0].message.content);
 ```
 
 ## 参数说明
 
-| 参数 | 类型 | 必填 | 说明 |
-|---|---|---|---|
-| `model` | string | ✅ | 要使用的模型名称 |
-| `messages` | array | ✅ | 对话消息列表 |
-| `temperature` | number | ❌ | 控制输出的随机性 (0-2) |
-| `max_tokens` | number | ❌ | 最大输出令牌数 |
-| `stream` | boolean | ❌ | 是否使用流式输出 |
-| `top_p` | number | ❌ | 核采样参数 (0-1) |
+| 参数 | 类型 | 必填 | 默认值 | 说明 |
+|---|---|---|---|---|
+| `model` | string | ✅ | - | 模型标识 |
+| `messages` | array | ✅ | - | 对话消息列表 |
+| `temperature` | number | ❌ | 0.7 | 输出随机性 (0-2) |
+| `max_tokens` | number | ❌ | 4096 | 最大输出令牌数 |
+| `stream` | boolean | ❌ | false | 流式输出（暂不支持） |
+| `top_p` | number | ❌ | 1 | 核采样参数 (0-1) |
 
-## 消息格式
+## 消息角色
 
-```json
-{
-  "role": "user|assistant|system",
-  "content": "消息内容"
-}
-```
-
-### 角色说明
-
-- `user`: 用户消息
-- `assistant`: 助手回复
-- `system`: 系统指令（可选）
+| 角色 | 说明 |
+|---|---|
+| `system` | 系统指令，设定 AI 行为 |
+| `user` | 用户消息 |
+| `assistant` | AI 助手的历史回复 |
 
 ## 响应格式
 
-### 标准响应
+### 成功响应
 
 ```json
 {
-  "id": "chatcmpl-abc123",
+  "id": "chatcmpl-abc123def456",
   "object": "chat.completion",
-  "created": 1677652288,
-  "model": "grok-4",
+  "created": 1709366400,
+  "model": "grok-3",
   "choices": [
     {
       "index": 0,
       "message": {
         "role": "assistant",
-        "content": "这是AI的回复内容..."
+        "content": "你好！我是 Grok，很高兴认识你..."
       },
       "finish_reason": "stop"
     }
   ],
   "usage": {
-    "prompt_tokens": 56,
-    "completion_tokens": 31,
-    "total_tokens": 87
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "total_tokens": 0
   }
 }
 ```
 
-### 流式响应
-
-```json
-{
-  "id": "chatcmpl-abc123",
-  "object": "chat.completion.chunk",
-  "created": 1677652288,
-  "model": "grok-4",
-  "choices": [
-    {
-      "index": 0,
-      "delta": {
-        "content": "这"
-      },
-      "finish_reason": null
-    }
-  ]
-}
-```
-
-## 错误处理
-
-### 常见错误码
-
-| 状态码 | 说明 | 解决方案 |
-|---|---|---|
-| 400 | 请求参数错误 | 检查请求格式和参数 |
-| 401 | 认证失败 | 检查 API Key 是否正确 |
-| 429 | 请求频率限制 | 降低请求频率 |
-| 500 | 服务器内部错误 | 稍后重试 |
-
-### 错误响应格式
+### 错误响应
 
 ```json
 {
   "error": {
-    "message": "Invalid API key",
-    "type": "invalid_request_error",
+    "message": "认证失败：无效的访问令牌",
+    "type": "authentication_error",
     "param": null,
     "code": "invalid_api_key"
   }
 }
 ```
 
+## 错误码
+
+| 状态码 | 说明 | 解决方案 |
+|---|---|---|
+| 400 | 请求参数错误 | 检查 JSON 格式和必填参数 |
+| 401 | 认证失败 | 检查 AUTH_TOKEN 是否正确 |
+| 500 | 服务器错误 | 检查 SSO Token 或 API Key 配置 |
+| 502 | 上游服务不可用 | Grok 服务暂时不可用，稍后重试 |
+
 ## 最佳实践
 
-### 1. 温度设置
-- **创意任务**: `temperature: 0.8-1.0`
-- **事实性回答**: `temperature: 0.1-0.3`
-- **平衡需求**: `temperature: 0.5-0.7`
+!!! tip "温度设置建议"
+    - **创意写作**: `temperature: 0.8-1.0`
+    - **代码生成**: `temperature: 0.1-0.3`
+    - **日常对话**: `temperature: 0.5-0.7`
 
-### 2. 令牌管理
-- 预估输入令牌数，避免超出限制
-- 设置合理的 `max_tokens` 值
-- 监控使用量，避免超额费用
+!!! tip "多轮对话"
+    将之前的对话历史包含在 `messages` 数组中，实现上下文连续的多轮对话。
 
-### 3. 错误重试
-- 实现指数退避重试机制
-- 处理网络超时和服务不可用情况
-- 记录错误日志便于排查
-
-### 4. 内容过滤
-- 添加输入验证和内容过滤
-- 避免发送敏感或违规内容
-- 实现结果内容审核
-
-## SDK 和工具
-
-### 推荐的 HTTP 客户端
-- **Python**: `requests`, `httpx`
-- **Node.js**: `axios`, `node-fetch`
-- **Java**: `OkHttp`, `Apache HttpClient`
-- **Go**: `net/http`
-
-### 调试工具
-- **Postman**: API 测试和调试
-- **curl**: 命令行测试
-- **浏览器开发者工具**: 网络请求分析
+!!! warning "注意事项"
+    - Vercel Serverless 函数有 120 秒超时限制
+    - 当前不支持流式输出（stream: true）
+    - SSO Token 有有效期，过期需要更新

@@ -1,20 +1,37 @@
 {
-  "updated": "2025-01",
+  "updated": "2026-03",
   "models": [
     {
-      "name": "Grok 4",
+      "name": "Grok 3",
+      "api_id": "grok-3",
       "type": "general",
-      "description_zh": "第四代通用模型，适合日常对话与问答",
-      "description_en": "Fourth-generation general-purpose model"
+      "description_zh": "主力通用模型，适合对话、推理、编程",
+      "description_en": "Main general-purpose model for conversation, reasoning, coding"
+    },
+    {
+      "name": "Grok 3 Mini",
+      "api_id": "grok-3-mini",
+      "type": "lightweight",
+      "description_zh": "轻量快速模型，适合简单问答",
+      "description_en": "Lightweight fast model for quick Q&A"
+    },
+    {
+      "name": "Grok 4",
+      "api_id": "grok-4",
+      "type": "general",
+      "description_zh": "新一代通用模型，适合日常对话与问答",
+      "description_en": "Next-gen general-purpose model"
     },
     {
       "name": "Grok 4 Heavy",
+      "api_id": "grok-4-heavy",
       "type": "heavy",
-      "description_zh": "高性能版本，适合复杂推理与编程",
-      "description_en": "High-performance version for complex reasoning"
+      "description_zh": "高性能模型，适合复杂推理与编程",
+      "description_en": "High-performance model for complex reasoning"
     },
     {
       "name": "Grok 4.1",
+      "api_id": "grok-4-1",
       "type": "optimized",
       "description_zh": "优化迭代版，适合高质量写作与内容生成",
       "description_en": "Optimized iteration for writing and content generation"
