@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pip install mkdocs-material pymdown-extensions && mkdocs build",
+  "buildCommand": "pip install --break-system-packages mkdocs-material pymdown-extensions && mkdocs build",
   "outputDirectory": "site",
   "rewrites": [
     { "source": "/v1/chat/completions", "destination": "/api/v1/chat/completions" },
